@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weihnachtswichteln</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <div class="snow-layer" aria-hidden="true">
+      <span class="flake f1"></span>
+      <span class="flake f2"></span>
+      <span class="flake f3"></span>
+      <span class="flake f4"></span>
+      <span class="flake f5"></span>
+      <span class="flake f6"></span>
+      <span class="flake f7"></span>
+      <span class="flake f8"></span>
+      <span class="flake f9"></span>
+      <span class="flake f10"></span>
+      <span class="flake f11"></span>
+      <span class="flake f12"></span>
+    </div>
+
+    <div class="container">
+      <header class="topbar">
+        <div class="title-wrap">
+          <p class="eyebrow">🎄 Dornmayr & Schneiders</p>
+          <h1>Weihnachtswichteln</h1>
+        </div>
+        <div class="topbar-actions">
+          <span class="welcome-badge">Hallo <strong><%= user.displayName %>!</strong></span>
+          <a href="/rules">Regeln</a>
+          <a href="/logout">Abmelden</a>
+        </div>
+      </header>
+
+      <% if (notice) { %>
+        <div class="notice"><%= notice %></div>
+      <% } %>
+
+      <section class="assignment-box">
+        <% if (myRecipient) { %>
+          <h2>Dein Wichtel</h2>
+          <p>Du bist für <strong><%= myRecipient %></strong> verantwortlich.</p>
+        <% } else if (!user.isAdmin) { %>
+          <h2>Dein Wichtel</h2>
+          <p>Es wurde noch keine Zuordnung erstellt. Bitte warte auf den Familien-Admin.</p>
+        <% } else { %>
+          <h2>Dein Wichtel</h2>
+          <p>Du kannst neue Zuordnungen erstellen und die Familie neu ziehen.</p>
+        <% } %>
+
+        <% if (canAssign) { %>
+          <form method="POST" action="/assign">
+            <button type="submit" class="secondary">Zuordnungen erstellen</button>
+          </form>
+        <% } %>
+      </section>
+
+      <section class="panel">
+        <h2>Deine Wunschliste</h2>
+
+        <form method="POST" action="/wishlist/add" class="wish-form">
+          <input type="text" name="title" placeholder="Wunsch z. B. Kaffeemaschine" required />
+          <input type="url" name="link" placeholder="Produkt-Link (optional)" />
+          <input type="url" name="imageUrl" placeholder="Bild-Link (optional)" />
+          <input type="text" name="price" placeholder="Preis (optional)" />
+          <button type="submit">Hinzufügen</button>
+        </form>
+
+        <% if (userWishlist.length === 0) { %>
+          <p>Du hast noch keine Wünsche hinzugefügt.</p>
+        <% } else { %>
+          <div class="wishlist-grid">
+            <% userWishlist.forEach((item) => { %>
+              <article class="wishlist-card">
+                <% if (item.imageUrl || item.link) { %>
+                  <img src="<%= item.imageUrl || item.link %>" alt="<%= item.title %>" onerror="this.style.display='none'" />
+                <% } %>
+                <div class="wishlist-card-body">
+                  <h3><%= item.title %></h3>
+                  <% if (item.price) { %>
+                    <p class="price"><%= item.price %></p>
+                  <% } %>
+                  <% if (item.link) { %>
+                    <a class="card-link" href="<%= item.link %>" target="_blank" rel="noreferrer">Produkt ansehen</a>
+                  <% } %>
+                </div>
+                <form method="POST" action="/wishlist/delete/<%= item.id %>">
+                  <button type="submit" class="text-button">Löschen</button>
+                </form>
+              </article>
+            <% }) %>
+          </div>
+        <% } %>
+      </section>
+
+      <section class="panel">
+        <h2>Alle Wunschlisten</h2>
+
+        <% familyWishlists.forEach((familyMember) => { %>
+          <article class="family-member">
+            <div class="family-header">
+              <h3><%= familyMember.name %></h3>
+              <a href="/user/<%= familyMember.id %>" class="secondary-link">Wunschliste öffnen</a>
+            </div>
+
+            <% if (familyMember.items.length === 0) { %>
+              <p>Keine Wünsche eingetragen.</p>
+            <% } else { %>
+              <div class="mini-card-row">
+                <% familyMember.items.slice(0, 3).forEach((item) => { %>
+                  <div class="mini-card">
+                    <% if (item.imageUrl) { %>
+                      <img src="<%= item.imageUrl %>" alt="<%= item.title %>" onerror="this.style.display='none'" />
+                    <% } %>
+                    <div>
+                      <strong><%= item.title %></strong>
+                      <% if (item.price) { %>
+                        <span><%= item.price %></span>
+                      <% } %>
+                    </div>
+                  </div>
+                <% }) %>
+              </div>
+            <% } %>
+          </article>
+        <% }) %>
+      </section>
+
+      <% if (user.isAdmin) { %>
+        <section class="panel admin-panel">
+          <h2>Admin-Bereich</h2>
+
+          <div class="admin-actions">
+            <form method="POST" action="/admin/reset-assignments" data-confirm="Möchtest du die aktuellen Wichtel-Zuordnungen wirklich zurücksetzen?">
+              <button type="submit" class="secondary">Zuordnungen zurücksetzen</button>
+            </form>
+            <form method="POST" action="/assign" data-confirm="Möchtest du eine neue Wichtel-Ziehung wirklich starten?">
+              <button type="submit" class="secondary">Neu ziehen</button>
+            </form>
+          </div>
+
+          <div class="admin-user-list">
+            <h3>Familienmitglieder verwalten</h3>
+            <% familyWishlists.forEach((familyMember) => { %>
+              <div class="admin-user-row">
+                <span><%= familyMember.name %></span>
+                <form method="POST" action="/admin/delete-user/<%= familyMember.id %>" data-confirm="Möchtest du <%= familyMember.name %> wirklich aus der Familie entfernen? Das löscht auch seine Wunschliste und Zuordnungen.">
+                  <button type="submit" class="text-button">Entfernen</button>
+                </form>
+              </div>
+            <% }) %>
+          </div>
+        </section>
+      <% } %>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('form[data-confirm]').forEach((form) => {
+          form.addEventListener('submit', (event) => {
+            const message = form.dataset.confirm;
+            if (!window.confirm(message)) {
+              event.preventDefault();
+            }
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

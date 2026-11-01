@@ -1,0 +1,24 @@
+{
+  "name": "weihnachtswichteln",
+  "version": "1.0.0",
+  "description": "Family Secret Santa website for wishlists and hidden gift assignments",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test"
+  },
+  "keywords": [
+    "wichteln",
+    "secret-santa",
+    "christmas",
+    "family"
+  ],
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^11.7.0",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1"
+  },
+  "license": "MIT"
+}

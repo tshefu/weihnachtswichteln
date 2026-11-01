@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wunschliste von <%= user.displayName %></title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <div class="snow-layer" aria-hidden="true">
+      <span class="flake f1"></span>
+      <span class="flake f2"></span>
+      <span class="flake f3"></span>
+      <span class="flake f4"></span>
+      <span class="flake f5"></span>
+      <span class="flake f6"></span>
+      <span class="flake f7"></span>
+      <span class="flake f8"></span>
+      <span class="flake f9"></span>
+      <span class="flake f10"></span>
+      <span class="flake f11"></span>
+      <span class="flake f12"></span>
+    </div>
+
+    <div class="container narrow">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Wunschliste</p>
+          <h1><%= user.displayName %></h1>
+        </div>
+        <div class="topbar-actions">
+          <a href="/dashboard">Zurück</a>
+          <a href="/logout">Abmelden</a>
+        </div>
+      </header>
+
+      <% if (notice) { %>
+        <div class="notice"><%= notice %></div>
+      <% } %>
+
+      <section class="panel">
+        <% if (items.length === 0) { %>
+          <p>Für <strong><%= user.displayName %></strong> sind noch keine Wünsche eingetragen.</p>
+        <% } else { %>
+          <div class="wishlist-grid">
+            <% items.forEach((item) => { %>
+              <article class="wishlist-card">
+                <% if (item.imageUrl || item.link) { %>
+                  <img src="<%= item.imageUrl || item.link %>" alt="<%= item.title %>" onerror="this.style.display='none'" />
+                <% } %>
+                <div class="wishlist-card-body">
+                  <h3><%= item.title %></h3>
+                  <% if (item.price) { %>
+                    <p class="price"><%= item.price %></p>
+                  <% } %>
+                  <% if (item.link) { %>
+                    <a class="card-link" href="<%= item.link %>" target="_blank" rel="noreferrer">Produkt ansehen</a>
+                  <% } %>
+                </div>
+              </article>
+            <% }) %>
+          </div>
+        <% } %>
+      </section>
+    </div>
+  </body>
+</html>

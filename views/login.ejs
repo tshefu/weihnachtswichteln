@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weihnachtswichteln</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body class="auth-page">
+    <div class="snow-layer" aria-hidden="true">
+      <span class="flake f1"></span>
+      <span class="flake f2"></span>
+      <span class="flake f3"></span>
+      <span class="flake f4"></span>
+      <span class="flake f5"></span>
+      <span class="flake f6"></span>
+      <span class="flake f7"></span>
+      <span class="flake f8"></span>
+      <span class="flake f9"></span>
+      <span class="flake f10"></span>
+      <span class="flake f11"></span>
+      <span class="flake f12"></span>
+    </div>
+
+    <main class="auth-card">
+      <h1>Weihnachtswichteln</h1>
+      <p class="subtitle">Gemeinsame Wunschlisten und geheime Geschenke</p>
+
+      <% if (notice) { %>
+        <div class="notice"><%= notice %></div>
+      <% } %>
+
+      <% if (error) { %>
+        <div class="error"><%= error %></div>
+      <% } %>
+
+      <% if (mode === 'login') { %>
+        <form method="POST" action="/login" class="auth-form">
+          <label>
+            Benutzername
+            <input type="text" name="username" placeholder="z. B. anna" required />
+          </label>
+
+          <label>
+            Passwort
+            <input type="password" name="password" placeholder="Dein Passwort" required />
+          </label>
+
+          <button type="submit">Anmelden</button>
+        </form>
+
+        <p class="switch-link">
+          Noch kein Konto? <a href="/register">Registrieren</a>
+        </p>
+      <% } else { %>
+        <form method="POST" action="/register" class="auth-form">
+          <label>
+            Name
+            <input type="text" name="displayName" placeholder="z. B. Anna" required />
+          </label>
+
+          <label>
+            Benutzername
+            <input type="text" name="username" placeholder="z. B. anna" required />
+          </label>
+
+          <label>
+            Passwort
+            <input type="password" name="password" placeholder="Sicheres Passwort" required />
+          </label>
+
+          <% if (adminRegistrationEnabled) { %>
+            <label>
+              Admin-Schlüssel
+              <input type="password" name="adminKey" placeholder="Nur für den Admin" />
+            </label>
+          <% } %>
+
+          <button type="submit">Konto erstellen</button>
+        </form>
+
+        <p class="switch-link">
+          Bereits registriert? <a href="/login">Anmelden</a>
+        </p>
+      <% } %>
+    </main>
+  </body>
+</html>
