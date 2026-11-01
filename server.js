@@ -2,6 +2,7 @@ const express = require('express');
 const session = require('express-session');
 const bcrypt = require('bcryptjs');
 const Database = require('better-sqlite3');
+const fs = require('fs');
 const path = require('path');
 const { createAssignments } = require('./lib/gift-exchange');
 const { removeUserAndData, resetAssignments } = require('./lib/admin-tools');
@@ -11,6 +12,7 @@ const port = process.env.PORT || 3000;
 const dbDir = path.join(__dirname, 'data');
 const dbPath = path.join(dbDir, 'wichteln.db');
 
+fs.mkdirSync(dbDir, { recursive: true });
 const db = new Database(dbPath);
 
 app.set('view engine', 'ejs');
