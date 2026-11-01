@@ -70,6 +70,23 @@ for (const columnName of ['imageUrl', 'price']) {
   }
 }
 
+function ensureDefaultAdmin() {
+  const userCount = db.prepare('SELECT COUNT(*) AS count FROM users').get().count;
+  if (userCount > 0) {
+    return;
+  }
+
+  const defaultUsername = String(process.env.ADMIN_USERNAME || 'admin').trim();
+  const defaultPassword = String(process.env.ADMIN_PASSWORD || 'admin123');
+  const passwordHash = bcrypt.hashSync(defaultPassword, 10);
+
+  db.prepare(
+    'INSERT INTO users (username, displayName, passwordHash, isAdmin) VALUES (?, ?, ?, 1)'
+  ).run(defaultUsername.toLowerCase(), 'Admin', passwordHash);
+}
+
+ensureDefaultAdmin();
+
 function requireAuth(req, res, next) {
   if (!req.session.userId) {
     return res.redirect('/login');
